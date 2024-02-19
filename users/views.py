@@ -3,6 +3,35 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import (PasswordResetView, PasswordResetDoneView,
+                                       PasswordResetConfirmView, PasswordResetCompleteView)
+
+
+def password_reset(request):
+    return PasswordResetView.as_view(
+        template_name='registration/password_reset_form.html',
+        email_template_name='registration/password_reset_email.html',
+        subject_template_name='registration/password_reset_subject.txt'
+    )(request)
+
+
+def password_reset_done(request):
+    return PasswordResetDoneView.as_view(
+        template_name='registration/password_reset_done.html'
+    )(request)
+
+
+def password_reset_confirm(request, uidb64, token):
+    return PasswordResetConfirmView.as_view(
+        template_name='registration/password_reset_confirm.html',
+        success_url='/reset/done/'
+    )(request, uidb64=uidb64, token=token)
+
+
+def password_reset_complete(request):
+    return PasswordResetCompleteView.as_view(
+        template_name='registration/password_reset_complete.html'
+    )(request)
 
 
 def signup_user(request):
@@ -42,4 +71,3 @@ def login_user(request):
 def logout_user(request):
     logout(request)
     return redirect(to='quotes:main')
-
